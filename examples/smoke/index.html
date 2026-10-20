@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>VIZIO Conjure web SDK smoke test</title>
+  </head>
+  <body>
+    <main>
+      <h1>CONJURE WEB SDK</h1>
+      <p id="runtime">SDK bundle not loaded.</p>
+    </main>
+    <script type="module">
+      const marker = document.querySelector("#runtime");
+      marker.textContent = `Browser runtime ready at ${new Date().toISOString()}`;
+    </script>
+  </body>
+</html>

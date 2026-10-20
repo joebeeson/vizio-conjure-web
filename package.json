@@ -1,0 +1,20 @@
+{
+  "name": "vizio-conjure-web",
+  "version": "0.1.0-alpha.1",
+  "private": true,
+  "description": "Browser-side TypeScript runtime helpers for VIZIO Conjure pages",
+  "type": "module",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "lint": "eslint .",
+    "test": "vitest run",
+    "check": "npm run lint && npm run build && npm test"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.0.0",
+    "eslint": "^9.0.0",
+    "typescript": "^5.0.0",
+    "typescript-eslint": "^8.0.0",
+    "vitest": "^3.0.0"
+  }
+}
