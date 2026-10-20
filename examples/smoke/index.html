@@ -9,10 +9,21 @@
     <main>
       <h1>CONJURE WEB SDK</h1>
       <p id="runtime">SDK bundle not loaded.</p>
+      <nav aria-label="Smoke controls">
+        <button type="button">One</button>
+        <button type="button">Two</button>
+        <button type="button">Three</button>
+      </nav>
+      <p id="focus-status">Focus: none</p>
     </main>
     <script type="module">
       const marker = document.querySelector("#runtime");
       marker.textContent = `Browser runtime ready at ${new Date().toISOString()}`;
+      document.querySelectorAll("button").forEach((button) => {
+        button.addEventListener("focus", () => {
+          document.querySelector("#focus-status").textContent = `Focus: ${button.textContent}`;
+        });
+      });
     </script>
   </body>
 </html>

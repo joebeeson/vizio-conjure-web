@@ -6,16 +6,31 @@
 
 Browser-side TypeScript helpers for pages loaded by VIZIO Conjure.
 
-Milestone 1 provides a typed runtime model, capability detection, a mock
-runtime, and a smoke page. Companion-library integration and Home Assistant
-RPC are intentionally capability-gated until physical TV behavior is measured.
+Milestone 2 adds normalized remote events, an opt-in DOM focus adapter, and a
+short-lived Home Assistant page bridge. The bridge capability is read from the
+URL fragment, removed from browser history, and used only for the fixed page
+subjects and command subjects documented below.
 
 ```ts
 import { createConjureApp } from "vizio-conjure-web";
 
 const app = createConjureApp();
 app.onKey((key) => console.log("remote key", key));
+app.onRemoteEvent((event) => console.log(event.type, event.key));
+app.installFocusAdapter();
+
+await app.bridge?.send("page.ready", { runtime: app.environment });
+app.bridge?.startPolling();
 ```
+
+The adapter maps the measured `Arrow*`, `Enter`, `Escape`, and media keys to
+Conjure keys, moves standard DOM focus, and activates the focused control on
+`OK`. Pages should provide ordinary buttons, links, and form controls. The SDK
+does not draw a separate cursor or execute arbitrary Home Assistant services.
+
+Page subjects are `page.ready`, `page.error`, `page.focus`, and
+`page.interaction`. Commands are `page.navigate`, `page.reload`, `page.focus`,
+and `session.close`.
 
 This repository is private during the initial hardware-validation phase and is
 not published to npm yet.
