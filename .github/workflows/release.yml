@@ -6,6 +6,7 @@ on:
 
 permissions:
   contents: write
+  id-token: write
 
 concurrency:
   group: release-${{ github.ref }}
@@ -19,8 +20,16 @@ jobs:
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: 24
-          cache: npm
+          registry-url: https://registry.npmjs.org
+          package-manager-cache: false
+      - name: Use npm trusted publishing requirements
+        run: npm install --global 'npm@^11.5.1'
       - run: npm ci
+      - name: Verify release version
+        shell: bash
+        env:
+          TAG: ${{ github.ref_name }}
+        run: test "$(node -p "require('./package.json').version")" = "${TAG#v}"
       - run: npm run check
       - run: npm run test:coverage
       - name: Build package archive
@@ -28,6 +37,18 @@ jobs:
         run: |
           mkdir -p artifacts
           npm pack --pack-destination artifacts
+      - name: Publish to npm
+        shell: bash
+        run: |
+          package="$(node -p "require('./package.json').name")"
+          version="$(node -p "require('./package.json').version")"
+          if npm view "$package@$version" version --registry=https://registry.npmjs.org >/dev/null 2>&1; then
+            echo "${package}@${version} already exists; skipping"
+          elif [[ "$version" == *-* ]]; then
+            npm publish --tag next --access public
+          else
+            npm publish --access public
+          fi
       - name: Create or update GitHub release
         env:
           GH_TOKEN: ${{ github.token }}
